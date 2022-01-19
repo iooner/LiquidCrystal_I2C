@@ -44,12 +44,14 @@ inline void LiquidCrystal_I2C::write(uint8_t value) {
 // can't assume that its in that state when a sketch starts (and the
 // LiquidCrystal constructor is called).
 
-LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows)
+LiquidCrystal_I2C::LiquidCrystal_I2C(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows,uint8_t lcd_sda,uint8_t lcd_sdl)
 {
   _Addr = lcd_Addr;
   _cols = lcd_cols;
   _rows = lcd_rows;
   _backlightval = LCD_NOBACKLIGHT;
+  _lcd_sda = lcd_sda;
+  _lcd_sdl = lcd_sdl;
 }
 
 void LiquidCrystal_I2C::oled_init(){
@@ -63,7 +65,7 @@ void LiquidCrystal_I2C::init(){
 
 void LiquidCrystal_I2C::init_priv()
 {
-	Wire.begin();
+	Wire.begin(_lcd_sda,_lcd_sdl);
 	_displayfunction = LCD_4BITMODE | LCD_1LINE | LCD_5x8DOTS;
 	begin(_cols, _rows);  
 }
@@ -245,6 +247,7 @@ void LiquidCrystal_I2C::backlight(void) {
 /*********** mid level commands, for sending data/cmds */
 
 inline void LiquidCrystal_I2C::command(uint8_t value) {
+
 	send(value, 0);
 }
 
@@ -264,7 +267,8 @@ void LiquidCrystal_I2C::write4bits(uint8_t value) {
 	pulseEnable(value);
 }
 
-void LiquidCrystal_I2C::expanderWrite(uint8_t _data){                                        
+void LiquidCrystal_I2C::expanderWrite(uint8_t _data){   
+	Wire.begin(_lcd_sda,_lcd_sdl);                                     
 	Wire.beginTransmission(_Addr);
 	printIIC((int)(_data) | _backlightval);
 	Wire.endTransmission();   
