@@ -1,4 +1,5 @@
 // Based on the work by DFRobot
+// Frank de Brabander, Marco Schwartz and https://github.com/johnrickman/LiquidCrystal_I2C
 
 #include "LiquidCrystal_I2C.h"
 #include <inttypes.h>
